@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Image;
-use Illuminate\Support\Facades\Storage; // Import the Storage facad
+use Illuminate\Support\Facades\Storage; 
 
 class ImageUploadController extends Controller
 {
@@ -67,7 +67,7 @@ class ImageUploadController extends Controller
     
         if ($request->hasFile('croppedImage')) {
             $file = $request->file('croppedImage');
-            $imageName = time() . '-' . $image->file_name;  // Optionally rename the image
+            $imageName = time() . '-' . $image->file_name;  
             $imagePath = 'uploads/' . $imageName;
     
             // Save the cropped image

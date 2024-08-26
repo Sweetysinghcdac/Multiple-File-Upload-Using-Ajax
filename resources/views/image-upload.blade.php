@@ -58,31 +58,51 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
+
         .image-container {
-    position: relative;
-    cursor: pointer;
-}
+            position: relative;
+            cursor: pointer;
+            display: inline-block;
+            width: 150px;  
+            height: 150px; 
+            margin: 10px;  
+        }
 
-.image-actions {
-    display: none;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-}
+        .image-container img {
+            width: 100%;  
+            height: 100%; 
+            object-fit: cover;
+            border-radius: 10px; 
+        }
 
-.image-container:hover .image-actions {
-    display: block;
-}
+        .image-actions {
+            position: absolute;
+            top: 10px; 
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+            z-index: 10; 
+        }
+
+        .image-container:hover .image-actions {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.5); 
+            border-radius: 10px; 
+            padding: 5px; 
+        }
+
 
     </style>
 </head>
 
 <body>
-    <div class="container mt-5">
-        <h2 class="text-center">Laravel Multiple File Upload Using Ajax</h2>
+    <div class="container my-5">
+        <h2 class="text-center mt-5">Laravel Multiple File Upload</h2>
         <form id="uploadForm" enctype="multipart/form-data">
             @csrf
-            <div class="mb-3">
+            <div class="my-3">
                 <label for="images" class="form-label">Select Images</label>
                 <input type="file" name="images[]" id="images" class="form-control" multiple>
             </div>
@@ -90,16 +110,27 @@
         </form>
 
         <div class="mt-4">
-            <h4>Uploaded Images</h4>
+            <h4 class="mt-4">Uploaded Images</h4>
             <div id="uploadedImages" class="uploaded-images">
                 @foreach($images as $image)
-                <div class="image-container" data-id="{{ $image->id }}" style="position: relative;">
+                <!-- <div class="image-container" data-id="{{ $image->id }}" style="position: relative;">
                     <img src="{{ $image->file_path }}" class="img-thumbnail" alt="{{ $image->file_name }}">
                     <div class="image-actions" style="display: none; position: absolute; top: 10px; right: 10px;">
                         <button class="btn btn-warning edit-image" data-id="{{ $image->id }}">Edit</button>
                         <button class="btn btn-danger delete-image" data-id="{{ $image->id }}">Delete</button>
                     </div>
+                </div> -->
+                <div class="col-md-3">
+                    <div class="image-container">
+                        <img src="{{ $image->file_path }}" alt="{{ $image->file_name }}" class="img-thumbnail">
+                        <div class="image-actions">
+                            <button class="btn btn-warning edit-image" data-id="{{ $image->id }}">Edit</button>
+                            <button class="btn btn-danger delete-image" data-id="{{ $image->id }}">Delete</button>
+                        </div>
+                    </div>
                 </div>
+
+
                 @endforeach
             </div>
         </div>
@@ -137,513 +168,207 @@
 
 
     <script>
-        // $('#uploadForm').on('submit', function(e) {
-        //     e.preventDefault();
 
-        //     let formData = new FormData(this);
+        $(document).ready(function() {
+            // Handle image upload
+            $('#uploadForm').on('submit', function(e) {
+                e.preventDefault();
 
-        //     // Check if any file is selected
-        //     if ($('#images')[0].files.length === 0) {
-        //         alert('Please select at least one image to upload.');
-        //         return;
-        //     }
+                let formData = new FormData(this);
 
-        //     $.ajax({
-        //         url: "{{ route('image.upload') }}",
-        //         type: 'POST',
-        //         data: formData,
-        //         contentType: false,
-        //         processData: false,
-        //         success: function(response) {
-        //             alert(response.success);
-        //             $('#uploadedImages').load(window.location.href + ' #uploadedImages');
-        //         },
-        //         error: function(xhr, status, error) {
-        //             console.log(xhr.responseText);
-        //             alert('Please select valid frontend error images to upload.');
-        //         }
-        //     });
-        // });
-
-//         $('#uploadForm').on('submit', function(e) {
-//     e.preventDefault();
-
-//     let formData = new FormData(this);
-
-//     // Check if any file is selected
-//     if ($('#images')[0].files.length === 0) {
-//         alert('Please select at least one image to upload.');
-//         return;
-//     }
-
-//     $.ajax({
-//         url: "{{ route('image.upload') }}",
-//         type: 'POST',
-//         data: formData,
-//         contentType: false,
-//         processData: false,
-//         success: function(response) {
-//             alert(response.success);
-//             $('#uploadedImages').load(window.location.href + ' #uploadedImages');
-//         },
-//         error: function(xhr, status, error) {
-//             console.log("Error status: " + status);
-//             console.log("Error: " + error);
-//             console.log("Response Text: " + xhr.responseText);
-//             alert('Please select valid images to upload.');
-//         }
-//     });
-// });
-
-// $(document).ready(function() {
-//     $('#uploadForm').on('submit', function(e) {
-//         e.preventDefault();
-
-//         let formData = new FormData(this);
-
-//         if ($('#images')[0].files.length === 0) {
-//             alert('Please select at least one image to upload.');
-//             return;
-//         }
-
-//         $.ajax({
-//             url: "{{ route('images.store') }}",
-//             type: 'POST',
-//             data: formData,
-//             contentType: false,
-//             processData: false,
-//             success: function(response) {
-//                 alert(response.success);
-//                 $('#uploadedImages').load(window.location.href + ' #uploadedImages');
-//             },
-//             error: function(xhr, status, error) {
-//                 console.log(xhr.responseText);
-//                 alert('Failed to upload images.');
-//             }
-//         });
-//     });
-
-//     // Handle delete image
-//     $(document).on('click', '.delete-image', function() {
-//         let id = $(this).data('id');
-
-//         if (confirm('Are you sure you want to delete this image?')) {
-//             $.ajax({
-//                 url: "/images/" + id,
-//                 type: 'DELETE',
-//                 data: {
-//                     _token: "{{ csrf_token() }}"
-//                 },
-//                 success: function(response) {
-//                     alert(response.success);
-//                     $('#uploadedImages').load(window.location.href + ' #uploadedImages');
-//                 },
-//                 error: function(xhr, status, error) {
-//                     console.log(xhr.responseText);
-//                     alert('Failed to delete the image.');
-//                 }
-//             });
-//         }
-//     });
-
-//     // Handle edit image
-//     $(document).on('click', '.edit-image', function() {
-//         let id = $(this).data('id');
-//         $('#editForm').data('id', id);
-
-//         $.ajax({
-//             url: "/images/" + id + "/edit",
-//             type: 'GET',
-//             success: function(data) {
-//                 $('#editModal').modal('show');
-//             },
-//             error: function(xhr, status, error) {
-//                 console.log(xhr.responseText);
-//                 alert('Failed to fetch the image.');
-//             }
-//         });
-//     });
-
-//     // Handle update image
-//     $('#editForm').on('submit', function(e) {
-//         e.preventDefault();
-
-//         let id = $(this).data('id');
-//         let formData = new FormData(this);
-
-//         $.ajax({
-//             url: "/images/" + id,
-//             type: 'POST',
-//             data: formData,
-//             contentType: false,
-//             processData: false,
-//             success: function(response) {
-//                 alert(response.success);
-//                 $('#uploadedImages').load(window.location.href + ' #uploadedImages');
-//                 $('#editModal').modal('hide');
-//             },
-//             error: function(xhr, status, error) {
-//                 console.log(xhr.responseText);
-//                 alert('Failed to update the image.');
-//             }
-//         });
-//     });
-// });
-
-$(document).ready(function() {
-    // Handle image upload
-    $('#uploadForm').on('submit', function(e) {
-        e.preventDefault();
-
-        let formData = new FormData(this);
-
-        if ($('#images')[0].files.length === 0) {
-            alert('Please select at least one image to upload.');
-            return;
-        }
-
-        $.ajax({
-            url: "{{ route('images.store') }}",
-            type: 'POST',
-            data: formData,
-            contentType: false,
-            processData: false,
-            success: function(response) {
-                alert(response.success);
-                $('#uploadedImages').load(window.location.href + ' #uploadedImages');
-            },
-            error: function(xhr, status, error) {
-                console.log(xhr.responseText);
-                alert('Failed to upload images.');
-            }
-        });
-    });
-
-    // Show edit/delete buttons on image click
-    $(document).on('click', '.image-container img', function() {
-        $(this).siblings('.image-actions').toggle(); // Toggle the visibility of the buttons
-    });
-
-    // Handle delete image
-    $(document).on('click', '.delete-image', function(e) {
-        e.stopPropagation(); // Prevent the click from triggering the image click event
-        let id = $(this).data('id');
-
-        if (confirm('Are you sure you want to delete this image?')) {
-            $.ajax({
-                url: "/images/" + id,
-                type: 'DELETE',
-                data: {
-                    _token: "{{ csrf_token() }}"
-                },
-                success: function(response) {
-                    alert(response.success);
-                    $('#uploadedImages').load(window.location.href + ' #uploadedImages');
-                },
-                error: function(xhr, status, error) {
-                    console.log(xhr.responseText);
-                    alert('Failed to delete the image.');
+                if ($('#images')[0].files.length === 0) {
+                    alert('Please select at least one image to upload.');
+                    return;
                 }
+
+                $.ajax({
+                    url: "{{ route('images.store') }}",
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        alert(response.success);
+                        $('#uploadedImages').load(window.location.href + ' #uploadedImages');
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(xhr.responseText);
+                        alert('Failed to upload images.');
+                    }
+                });
             });
-        }
-    });
 
+            // Show edit/delete buttons on image click
+            $(document).on('click', '.image-container img', function() {
+                $(this).siblings('.image-actions').toggle(); // Toggle the visibility of the buttons
+            });
 
-//     let cropper;
+            // Handle delete image
+            $(document).on('click', '.delete-image', function(e) {
+                e.stopPropagation(); // Prevent the click from triggering the image click event
+                let id = $(this).data('id');
 
-// // Handle edit image
-// $(document).on('click', '.edit-image', function(e) {
-//     e.stopPropagation();
-//     let id = $(this).data('id');
-//     console.log("Edit button clicked. Image ID:", id); // Log the ID
-
-//     $('#editForm').data('id', id);
-
-//     $.ajax({
-//         url: "/images/" + id + "/edit",
-//         type: 'GET',
-//         success: function(data) {
-//             console.log("AJAX success. Data returned:", data); // Log the returned data
-//             if (data.file_path) {
-//                 $('#imageToEdit').attr('src', data.file_path); // Load the image for editing
-//                 $('#editModal').modal('show');
-
-//                 $('#editModal').on('shown.bs.modal', function() {
-//                     cropper = new Cropper(document.getElementById('imageToEdit'), {
-//                         aspectRatio: NaN, // Allow free aspect ratio
-//                         viewMode: 1, // Make sure the image fits the container
-//                         autoCropArea: 1, // Attempt to auto-crop the entire image
-//                         responsive: true,
-//                         zoomOnWheel: true,
-//                         movable: true,
-//                         rotatable: true,
-//                         scalable: true,
-//                         cropBoxResizable: true,
-//                         ready: function () {
-//                             console.log("Cropper ready event triggered.");
-                            
-//                             const imageData = cropper.getImageData();
-//                             cropper.setCropBoxData({
-//                                 left: 0,
-//                                 top: 0,
-//                                 width: imageData.naturalWidth,
-//                                 height: imageData.naturalHeight
-//                             });
-//                         }
-//                     });
-//                 }).on('hidden.bs.modal', function() {
-//                     if (cropper) {
-//                         cropper.destroy();
-//                         cropper = null;
-//                     }
-//                 });
-//             } else {
-//                 console.error("Image path not found in the response");
-//                 alert("Error: Image path not found in the response.");
-//             }
-//         },
-//         error: function(xhr, status, error) {
-//             console.log("Failed to fetch image data:", xhr.responseText); // Log the error response
-//             alert('Failed to fetch the image.');
-//         }
-//     });
-// });
-
-// // Rotate left
-// $(document).on('click', '#rotateLeft', function() { // Use event delegation
-//     if (cropper) {
-//         cropper.rotate(-90);
-//     }
-// });
-
-// // Rotate right
-// $(document).on('click', '#rotateRight', function() { // Use event delegation
-//     if (cropper) {
-//         cropper.rotate(90);
-//     }
-// });
-
-// // Handle update image
-// $('#editForm').on('submit', function(e) {
-//     e.preventDefault();
-
-//     let id = $(this).data('id');
-//     console.log("Submitting form for image ID:", id); // Log the ID
-
-//     // Ensure cropper is initialized
-//     if (!cropper) {
-//         console.error("Cropper is not initialized.");
-//         alert('Failed to update the image. Cropper is not initialized.');
-//         return;
-//     }
-
-//     let canvas = cropper.getCroppedCanvas();
-//     if (!canvas) {
-//         console.error("Failed to get cropped canvas.");
-//         alert('Failed to update the image. Unable to get cropped canvas.');
-//         return;
-//     }
-
-//     canvas.toBlob(function(blob) {
-//         if (!blob) {
-//             console.error("Failed to convert canvas to blob.");
-//             alert('Failed to update the image. Unable to convert canvas to blob.');
-//             return;
-//         }
-
-//         let formData = new FormData();
-//         formData.append('croppedImage', blob);  // Append the cropped image blob
-//         formData.append('_method', 'PUT');      // Specify PUT method
-//         formData.append('_token', '{{ csrf_token() }}');
-
-//         $.ajax({
-//             url: "/images/" + id,
-//             type: 'POST',
-//             data: formData,
-//             contentType: false,
-//             processData: false,
-//             success: function(response) {
-//                 console.log("Image update successful:", response);  // Log the response
-//                 alert(response.success);
-//                 $('#uploadedImages').load(window.location.href + ' #uploadedImages');
-//                 $('#editModal').modal('hide');
-//             },
-//             error: function(xhr, status, error) {
-//                 console.log("Failed to update image:", xhr.responseText);  // Log the error response
-//                 alert('Failed to update the image.');
-//             }
-//         });
-//     });
-// });
-});
-
-$(document).ready(function() {
-    let cropper;
-
-    // Handle edit image
-    $(document).on('click', '.edit-image', function(e) {
-        e.stopPropagation();
-        let id = $(this).data('id');
-        console.log("Edit button clicked. Image ID:", id); // Log the ID
-
-        $('#editForm').data('id', id);
-
-        $.ajax({
-            url: "/images/" + id + "/edit",
-            type: 'GET',
-            success: function(data) {
-                console.log("AJAX success. Data returned:", data); // Log the returned data
-                if (data.file_path) {
-                    $('#imageToEdit').attr('src', data.file_path); // Load the image for editing
-                    $('#editModal').modal('show');
-
-                    $('#editModal').on('shown.bs.modal', function() {
-                        if (cropper) {
-                            cropper.destroy();
-                        }
-                        cropper = new Cropper(document.getElementById('imageToEdit'), {
-                            aspectRatio: NaN, // Allow free aspect ratio
-                            viewMode: 1, // Make sure the image fits the container
-                            autoCropArea: 1, // Attempt to auto-crop the entire image
-                            responsive: true,
-                            zoomOnWheel: true,
-                            movable: true,
-                            rotatable: true,
-                            scalable: true,
-                            cropBoxResizable: true,
-                            ready: function () {
-                                console.log("Cropper ready event triggered.");
-
-                                const imageData = cropper.getImageData();
-                                cropper.setCropBoxData({
-                                    left: 0,
-                                    top: 0,
-                                    width: imageData.naturalWidth,
-                                    height: imageData.naturalHeight
-                                });
-
-                                // Check if the canvas can be created
-                                let canvas = cropper.getCroppedCanvas();
-                                if (!canvas) {
-                                    console.error("Failed to get cropped canvas.");
-                                    alert('Failed to initialize cropper correctly.');
-                                }
-                            }
-                        });
-                    }).on('hidden.bs.modal', function() {
-                        if (cropper) {
-                            cropper.destroy();
-                            cropper = null;
+                if (confirm('Are you sure you want to delete this image?')) {
+                    $.ajax({
+                        url: "/images/" + id,
+                        type: 'DELETE',
+                        data: {
+                            _token: "{{ csrf_token() }}"
+                        },
+                        success: function(response) {
+                            alert(response.success);
+                            $('#uploadedImages').load(window.location.href + ' #uploadedImages');
+                        },
+                        error: function(xhr, status, error) {
+                            console.log(xhr.responseText);
+                            alert('Failed to delete the image.');
                         }
                     });
-                } else {
-                    console.error("Image path not found in the response");
-                    alert("Error: Image path not found in the response.");
-                }
-            },
-            error: function(xhr, status, error) {
-                console.log("Failed to fetch image data:", xhr.responseText); // Log the error response
-                alert('Failed to fetch the image.');
-            }
-        });
-    });
-
-    // Rotate left
-    $(document).on('click', '#rotateLeft', function() {
-        if (cropper) {
-            cropper.rotate(-90);
-        }
-    });
-
-    // Rotate right
-    $(document).on('click', '#rotateRight', function() {
-        if (cropper) {
-            cropper.rotate(90);
-        }
-    });
-
-    // Handle update image
-    $('#editForm').on('submit', function(e) {
-        e.preventDefault();
-
-        let id = $(this).data('id');
-        console.log("Submitting form for image ID:", id); // Log the ID
-
-        // Ensure cropper is initialized
-        if (!cropper) {
-            console.error("Cropper is not initialized.");
-            alert('Failed to update the image. Cropper is not initialized.');
-            return;
-        }
-
-        let canvas = cropper.getCroppedCanvas();
-        if (!canvas) {
-            console.error("Failed to get cropped canvas.");
-            alert('Failed to update the image. Unable to get cropped canvas.');
-            return;
-        }
-
-        canvas.toBlob(function(blob) {
-            if (!blob) {
-                console.error("Failed to convert canvas to blob.");
-                alert('Failed to update the image. Unable to convert canvas to blob.');
-                return;
-            }
-
-            let formData = new FormData();
-            formData.append('croppedImage', blob);  // Append the cropped image blob
-            formData.append('_method', 'PUT');      // Specify PUT method
-            formData.append('_token', '{{ csrf_token() }}');
-
-            $.ajax({
-                url: "/images/" + id,
-                type: 'POST',
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function(response) {
-                    console.log("Image update successful:", response);  // Log the response
-                    alert(response.success);
-                    $('#uploadedImages').load(window.location.href + ' #uploadedImages');
-                    $('#editModal').modal('hide');
-                },
-                error: function(xhr, status, error) {
-                    console.log("Failed to update image:", xhr.responseText);  // Log the error response
-                    alert('Failed to update the image.');
                 }
             });
+
+
+
         });
-    });
-});
 
-    // // Handle update image
-    // $('#editForm').on('submit', function(e) {
-    //     e.preventDefault();
+        $(document).ready(function() {
+            let cropper;
 
-    //     let id = $(this).data('id');
-    //     let formData = new FormData(this);
-    //     console.log("Submitting edit for image ID:", id); // Debugging log
+            // Handle edit image
+            $(document).on('click', '.edit-image', function(e) {
+                e.stopPropagation();
+                let id = $(this).data('id');
+                console.log("Edit button clicked. Image ID:", id); 
 
-    //     $.ajax({
-    //         url: "/images/" + id,
-    //         type: 'POST',
-    //         data: formData,
-    //         contentType: false,
-    //         processData: false,
-    //         success: function(response) {
-    //             console.log("Image updated successfully:", response); // Debugging log
-    //             alert(response.success);
-    //             $('#uploadedImages').load(window.location.href + ' #uploadedImages');
-    //             $('#editModal').modal('hide');
-    //         },
-    //         error: function(xhr, status, error) {
-    //             console.log("Failed to update image:", xhr.responseText); // Debugging log
-    //             alert('Failed to update the image.');
-    //         }
-    //     });
-    // });
+                $('#editForm').data('id', id);
 
+                $.ajax({
+                    url: "/images/" + id + "/edit",
+                    type: 'GET',
+                    success: function(data) {
+                        console.log("AJAX success. Data returned:", data);
+                        if (data.file_path) {
+                            $('#imageToEdit').attr('src', data.file_path); 
+                            $('#editModal').modal('show');
 
+                            $('#editModal').on('shown.bs.modal', function() {
+                                if (cropper) {
+                                    cropper.destroy();
+                                }
+                                cropper = new Cropper(document.getElementById('imageToEdit'), {
+                                    aspectRatio: NaN, // Allow free aspect ratio
+                                    viewMode: 1, // Make sure the image fits the container
+                                    autoCropArea: 1, // Attempt to auto-crop the entire image
+                                    responsive: true,
+                                    zoomOnWheel: true,
+                                    movable: true,
+                                    rotatable: true,
+                                    scalable: true,
+                                    cropBoxResizable: true,
+                                    ready: function () {
+                                        console.log("Cropper ready event triggered.");
+
+                                        const imageData = cropper.getImageData();
+                                        cropper.setCropBoxData({
+                                            left: 0,
+                                            top: 0,
+                                            width: imageData.naturalWidth,
+                                            height: imageData.naturalHeight
+                                        });
+
+                                        // Check if the canvas can be created
+                                        let canvas = cropper.getCroppedCanvas();
+                                        if (!canvas) {
+                                            console.error("Failed to get cropped canvas.");
+                                            alert('Failed to initialize cropper correctly.');
+                                        }
+                                    }
+                                });
+                            }).on('hidden.bs.modal', function() {
+                                if (cropper) {
+                                    cropper.destroy();
+                                    cropper = null;
+                                }
+                            });
+                        } else {
+                            console.error("Image path not found in the response");
+                            alert("Error: Image path not found in the response.");
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log("Failed to fetch image data:", xhr.responseText); 
+                        alert('Failed to fetch the image.');
+                    }
+                });
+            });
+
+            // Rotate left
+            $(document).on('click', '#rotateLeft', function() {
+                if (cropper) {
+                    cropper.rotate(-90);
+                }
+            });
+
+            // Rotate right
+            $(document).on('click', '#rotateRight', function() {
+                if (cropper) {
+                    cropper.rotate(90);
+                }
+            });
+
+            // Handle update image
+            $('#editForm').on('submit', function(e) {
+                e.preventDefault();
+
+                let id = $(this).data('id');
+                console.log("Submitting form for image ID:", id); 
+
+                // Ensure cropper is initialized
+                if (!cropper) {
+                    console.error("Cropper is not initialized.");
+                    alert('Failed to update the image. Cropper is not initialized.');
+                    return;
+                }
+
+                let canvas = cropper.getCroppedCanvas();
+                if (!canvas) {
+                    console.error("Failed to get cropped canvas.");
+                    alert('Failed to update the image. Unable to get cropped canvas.');
+                    return;
+                }
+
+                canvas.toBlob(function(blob) {
+                    if (!blob) {
+                        console.error("Failed to convert canvas to blob.");
+                        alert('Failed to update the image. Unable to convert canvas to blob.');
+                        return;
+                    }
+
+                    let formData = new FormData();
+                    formData.append('croppedImage', blob); 
+                    formData.append('_method', 'PUT');      
+                    formData.append('_token', '{{ csrf_token() }}');
+
+                    $.ajax({
+                        url: "/images/" + id,
+                        type: 'POST',
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function(response) {
+                            console.log("Image update successful:", response);  
+                            alert(response.success);
+                            $('#uploadedImages').load(window.location.href + ' #uploadedImages');
+                            $('#editModal').modal('hide');
+                        },
+                        error: function(xhr, status, error) {
+                            console.log("Failed to update image:", xhr.responseText);  
+                            alert('Failed to update the image.');
+                        }
+                    });
+                });
+            });
+        });
 
     </script>
 </body>
