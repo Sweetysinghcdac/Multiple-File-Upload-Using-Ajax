@@ -1,12 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laravel Multiple File Upload</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .uploaded-images {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .uploaded-images img {
+            width: 100%;
+            border-radius: 10px;
+            object-fit: cover;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
+
 <body>
     <div class="container mt-5">
         <h2 class="text-center">Laravel Multiple File Upload Using Ajax</h2>
@@ -21,15 +71,16 @@
 
         <div class="mt-4">
             <h4>Uploaded Images</h4>
-            <div id="uploadedImages" class="row">
+            <div id="uploadedImages" class="uploaded-images">
                 @foreach($images as $image)
-                    <div class="col-md-3">
-                        <img src="{{ $image->file_path }}" class="img-thumbnail w-10 h-10" alt="{{ $image->file_name }}">
-                    </div>
+                <div>
+                    <img src="{{ $image->file_path }}" class="img-thumbnail" alt="{{ $image->file_name }}">
+                </div>
                 @endforeach
             </div>
         </div>
     </div>
+
 
     <script>
         // $('#uploadForm').on('submit', function(e) {
