@@ -97,9 +97,9 @@
     </style>
 </head>
 
-<body>
+<body> 
     <div class="container my-5">
-        <h2 class="text-center mt-5">Laravel Multiple File Upload</h2>
+        <h2 class="text-center mt-5"> Multiple File Upload </h2>
         <form id="uploadForm" enctype="multipart/form-data">
             @csrf
             <div class="my-3">
